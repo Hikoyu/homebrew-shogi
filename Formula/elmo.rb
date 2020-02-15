@@ -13,15 +13,17 @@ class Elmo < Formula
 
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
-    # Remove unrecognized options if warned by configure
+
     system "mkdir eval"
     system "mv nn.bin eval"
-    system "cp #{HOMEBREW_PREFIX}/opt/yaneuraou/bin/YaneuraOu YaneuraOu_elmo_wcsc29"
-    system "echo elmo_wcsc29 >engine_name.txt"
-    prefix.install "eval", "YaneuraOu_elmo_wcsc29", "engine_name.txt"
+    system "cp #{HOMEBREW_PREFIX}/opt/yaneuraou/YaneuraOu_NNUE YaneuraOu_elmo_#{version}"
+    system "echo elmo_#{version} >engine_name.txt"
+    prefix.install "eval", "YaneuraOu_elmo_#{version}", "engine_name.txt"
+    ohai "[INFO] Copy and paste the path below to the box for defining Shogi engine in GUI software."
+    ohai "#{prefix}/YaneuraOu_elmo_#{version}"
   end
 
   test do
-    assert_match 'readyok', shell_output("cd #{prefix} && echo 'isready' | ./YaneuraOu_elmo_wcsc29 | tail -n 1")
+    assert_match 'readyok', shell_output("cd #{prefix} && echo 'isready' | ./YaneuraOu_elmo_#{version} | grep 'readyok'")
   end
 end

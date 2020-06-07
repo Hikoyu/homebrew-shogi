@@ -4,9 +4,9 @@
 class Yaneuraou < Formula
   desc "YaneuraOu is the World's Strongest Shogi engine(AI player) , WCSC29 1st winner , educational and USI compliant engine."
   homepage "http://yaneuraou.yaneu.com"
-  url "https://github.com/yaneurao/YaneuraOu/archive/V4.88.tar.gz"
-  version "4.88"
-  sha256 "a55b139290451777db20b41dd90b86f15c8600f7f991e8740b38e0b7debac5e0"
+  url "https://github.com/yaneurao/YaneuraOu/archive/V4.91.tar.gz"
+  version "4.91"
+  sha256 "db13f249d55aa8a5a0c75d4fccb8750446345dd937f4c2cf1326341bf53a84d5"
 
   depends_on "gnu-sed"
 
@@ -28,6 +28,8 @@ class Yaneuraou < Formula
     system "gsed -i -e \"s,#TARGET_CPU = SSE41,TARGET_CPU = SSE41,\" -e \"s,TARGET_CPU = SSE2,#TARGET_CPU = SSE2,\" source/Makefile" if Hardware::CPU.sse4?
     system "gsed -i -e \"s,#TARGET_CPU = SSE42,TARGET_CPU = SSE42,\" -e \"s,TARGET_CPU = SSE41,#TARGET_CPU = SSE41,\" source/Makefile" if Hardware::CPU.sse4_2?
     system "gsed -i -e \"s,#TARGET_CPU = AVX2,TARGET_CPU = AVX2,\" -e \"s,TARGET_CPU = SSE42,#TARGET_CPU = SSE42,\" source/Makefile" if Hardware::CPU.avx2?
+
+    system "gsed -i -e \"s,-march=corei7-avx,-march=core-avx2,\" source/Makefile"
 
     system "make -C source"
     system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE"

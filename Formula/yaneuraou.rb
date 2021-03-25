@@ -4,9 +4,10 @@
 class Yaneuraou < Formula
   desc "YaneuraOu is the World's Strongest Shogi engine(AI player) , WCSC29 1st winner , educational and USI compliant engine."
   homepage "http://yaneuraou.yaneu.com"
-  url "https://github.com/yaneurao/YaneuraOu/archive/V4.91.tar.gz"
-  version "4.91"
-  sha256 "db13f249d55aa8a5a0c75d4fccb8750446345dd937f4c2cf1326341bf53a84d5"
+  url "https://github.com/yaneurao/YaneuraOu/archive/refs/tags/v6.00.tar.gz"
+  version "6.00"
+  sha256 "3e8015db48dcf4727448a81fe347e97c52e7621c78b2f73a5db80914a6e44ae7"
+  license "GPL-3.0"
 
   depends_on "gnu-sed"
 

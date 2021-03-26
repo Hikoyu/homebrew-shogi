@@ -1,12 +1,12 @@
 # Documentation: https://docs.brew.sh/Formula-Cookbook
 #                https://rubydoc.brew.sh/Formula
 # PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
-class UonumaYaneuraou < Formula
-  desc "YaneuraOu is the World's Strongest Shogi engine(AI player) , WCSC29 1st winner , educational and USI compliant engine."
+class Kristallweizen < Formula
+  desc "Kristallweizen is WCSC29 2nd winner"
   homepage ""
-  url "https://github.com/yaneurao/YaneuraOu/releases/download/20190212_k-p-256-32-32/20190212_k-p-256-32-32.zip"
-  version "20190212"
-  sha256 "e8d7359a8648acfadfba6ef87ff129e4466091643e6094a1b1a82c91e640eebb"
+  url "https://github.com/Tama4649/Kristallweizen/raw/master/Kristallweizen.zip"
+  version "wcsc29"
+  sha256 "7a3a7ed075269d8cc0847e4647a330b11bb5e3fac613ceb217cda8218a0976d0"
 
   depends_on "yaneuraou"
 

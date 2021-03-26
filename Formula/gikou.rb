@@ -18,17 +18,18 @@ class Gikou < Formula
 
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
+
     resource("Gikou2_win").fetch
     system "cp", resource("Gikou2_win").downloader.cached_location, "gikou2_win.zip"
     system "unar gikou2_win.zip Copying.txt Readme.md.txt gikou_ja.txt *.bin"
     system "make CXX=${HOMEBREW_PREFIX}/opt/llvm/bin/clang++ release"
-    system "mv bin/release gikou_#{version}"
-    prefix.install "gikou_#{version}", Dir["gikou2_win/*"]
-    ohai "[INFO] Copy and paste the path below to the box for defining Shogi engine in GUI software."
-    ohai "#{prefix}/gikou_#{version}"
+    system "mv bin/release #{name}"
+	prefix.install "#{name}", Dir["gikou2_win/*"]
+	ohai "[INFO] #{name} is installed in the path below."
+    ohai "#{opt_prefix}/#{name}"
   end
 
   test do
-    assert_match 'readyok', shell_output("cd #{prefix} && echo 'isready' | ./gikou_#{version} | grep 'readyok'")
+    assert_match 'readyok', shell_output("cd #{prefix} && echo 'isready' | ./#{name} | grep 'readyok'")
   end
 end

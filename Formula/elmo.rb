@@ -16,14 +16,14 @@ class Elmo < Formula
 
     system "mkdir eval"
     system "mv nn.bin eval"
-    system "cp #{HOMEBREW_PREFIX}/opt/yaneuraou/YaneuraOu_NNUE YaneuraOu_elmo_#{version}"
-    system "echo elmo_#{version} >engine_name.txt"
-    prefix.install "eval", "YaneuraOu_elmo_#{version}", "engine_name.txt"
-    ohai "[INFO] Copy and paste the path below to the box for defining Shogi engine in GUI software."
-    ohai "#{prefix}/YaneuraOu_elmo_#{version}"
+    system "echo #{name}_#{version} >engine_name.txt"
+    system "cp #{HOMEBREW_PREFIX}/opt/yaneuraou/YaneuraOu_NNUE #{name}"
+    prefix.install "eval", "engine_name.txt", "#{name}"
+    ohai "[INFO] #{name} is installed in the path below."
+    ohai "#{opt_prefix}/#{name}"
   end
 
   test do
-    assert_match 'readyok', shell_output("cd #{prefix} && echo 'isready' | ./YaneuraOu_elmo_#{version} | grep 'readyok'")
+    assert_match 'readyok', shell_output("cd #{prefix} && echo 'isready' | ./#{name} | grep 'readyok'")
   end
 end

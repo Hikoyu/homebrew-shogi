@@ -13,10 +13,16 @@ class Kristallweizen < Formula
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
 
+    author = "Team Barrel house"
+    exe = "#{HOMEBREW_PREFIX}/opt/yaneuraou/YaneuraOu_NNUE"
+
     system "mkdir eval"
     system "mv nn.bin eval"
     system "echo #{name}_#{version} >engine_name.txt"
-    system "cp #{HOMEBREW_PREFIX}/opt/yaneuraou/YaneuraOu_NNUE #{name}"
+    system "echo #{author} >>engine_name.txt"
+    system "echo '#!/bin/sh' >#{name}"
+    system "echo #{exe} >>#{name}"
+    system "chmod 755 #{name}"
     prefix.install "eval", "engine_name.txt", "#{name}"
     ohai "[INFO] #{name} is installed in the path below."
     ohai "#{opt_prefix}/#{name}"

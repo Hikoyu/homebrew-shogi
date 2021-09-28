@@ -4,9 +4,9 @@
 class Yaneuraou < Formula
   desc "YaneuraOu is the World's Strongest Shogi engine(AI player) , WCSC29 1st winner , educational and USI compliant engine."
   homepage "http://yaneuraou.yaneu.com"
-  url "https://github.com/yaneurao/YaneuraOu/archive/refs/tags/v6.00.tar.gz"
-  version "6.00"
-  sha256 "3e8015db48dcf4727448a81fe347e97c52e7621c78b2f73a5db80914a6e44ae7"
+  url "https://github.com/yaneurao/YaneuraOu/archive/refs/tags/v6.50.tar.gz"
+  version "6.50"
+  sha256 "cdf3d6f6b1222e3f273a03cd8d2aae6392e49a024e1742dbdbc3b93912c30a41"
   license "GPL-3.0"
 
   depends_on "gnu-sed"
@@ -14,49 +14,37 @@ class Yaneuraou < Formula
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
 
-    system "gsed -i -e \"s,#define USE_AVX2,//#define USE_AVX2,\" source/config.h"
-    system "gsed -i -e \"s,//#define NO_SSE,#define NO_SSE,\" source/config.h" if Hardware::CPU.is_32_bit?
-    system "gsed -i -e \"s,//#define USE_SSE2,#define USE_SSE2,\" source/config.h" if Hardware::CPU.is_64_bit?
-    system "gsed -i -e \"s,//#define USE_SSE41,#define USE_SSE41,\" -e \"s,#define USE_SSE2,//#define USE_SSE2,\" source/config.h" if Hardware::CPU.sse4?
-    system "gsed -i -e \"s,//#define USE_SSE42,#define USE_SSE42,\" -e \"s,#define USE_SSE41,//#define USE_SSE41,\" source/config.h" if Hardware::CPU.sse4_2?
-    system "gsed -i -e \"s,//#define USE_AVX2,#define USE_AVX2,\" -e \"s,#define USE_SSE42,//#define USE_SSE42,\" source/config.h" if Hardware::CPU.avx2?
-
-    system "gsed -i -e \"s,#COMPILER = g++,COMPILER = g++,\" -e \"s,COMPILER = clang++,#COMPILER = clang++,\" source/Makefile"
-
-    system "gsed -i -e \"s,TARGET_CPU = AVX2,#TARGET_CPU = AVX2,\" source/Makefile"
-    system "gsed -i -e \"s,#TARGET_CPU = NO_SSE,TARGET_CPU = NO_SSE,\" source/Makefile" if Hardware::CPU.is_32_bit?
-    system "gsed -i -e \"s,#TARGET_CPU = SSE2,TARGET_CPU = SSE2,\" source/Makefile" if Hardware::CPU.is_64_bit?
-    system "gsed -i -e \"s,#TARGET_CPU = SSE41,TARGET_CPU = SSE41,\" -e \"s,TARGET_CPU = SSE2,#TARGET_CPU = SSE2,\" source/Makefile" if Hardware::CPU.sse4?
-    system "gsed -i -e \"s,#TARGET_CPU = SSE42,TARGET_CPU = SSE42,\" -e \"s,TARGET_CPU = SSE41,#TARGET_CPU = SSE41,\" source/Makefile" if Hardware::CPU.sse4_2?
-    system "gsed -i -e \"s,#TARGET_CPU = AVX2,TARGET_CPU = AVX2,\" -e \"s,TARGET_CPU = SSE42,#TARGET_CPU = SSE42,\" source/Makefile" if Hardware::CPU.avx2?
-
     system "gsed -i -e \"s,-march=corei7-avx,-march=core-avx2,\" source/Makefile"
 
-    system "make -C source"
+    cpu = "OTHER"
+    cpu = "SSE2" if Hardware::CPU.intel?
+    cpu = "SSE41" if Hardware::CPU.sse4?
+    cpu = "SSE42" if Hardware::CPU.sse4_2?
+    cpu = "AVX2" if Hardware::CPU.avx2?
+
+    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE"
     system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE"
+    system "make -C source clean"
 
-    system "gsed -i -e \"s,YANEURAOU_EDITION = YANEURAOU_ENGINE_NNUE,#YANEURAOU_EDITION = YANEURAOU_ENGINE_NNUE,\" -e \"s,##YANEURAOU_EDITION = YANEURAOU_ENGINE_NNUE_KP256,YANEURAOU_EDITION = YANEURAOU_ENGINE_NNUE_KP256,\" source/Makefile"
-    system "make clean -C source"
-    system "make -C source"
+    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE_KP256"
     system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE_KP256"
+    system "make -C source clean"
 
-    system "gsed -i -e \"s,YANEURAOU_EDITION = YANEURAOU_ENGINE_NNUE_KP256,#YANEURAOU_EDITION = YANEURAOU_ENGINE_NNUE_KP256,\" -e \"s,#YANEURAOU_EDITION = YANEURAOU_ENGINE_KPPT,YANEURAOU_EDITION = YANEURAOU_ENGINE_KPPT,\" source/Makefile"
-    system "make clean -C source"
-    system "make -C source"
-    system "mv source/YaneuraOu-by-gcc YaneuraOu_KPPT"
+    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE_HALFKPE9"
+    system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE_HALFKPE9"
+    system "make -C source clean"
 
-    system "gsed -i -e \"s,YANEURAOU_EDITION = YANEURAOU_ENGINE_KPPT,#YANEURAOU_EDITION = YANEURAOU_ENGINE_KPPT,\" -e \"s,#YANEURAOU_EDITION = YANEURAOU_ENGINE_KPP_KKPT,YANEURAOU_EDITION = YANEURAOU_ENGINE_KPP_KKPT,\" source/Makefile"
-    system "make clean -C source"
-    system "make -C source"
-    system "mv source/YaneuraOu-by-gcc YaneuraOu_KPP_KKPT"
+    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_MATE_ENGINE"
+    system "mv source/YaneuraOu-by-gcc YaneuraOu_MATE"
+    system "make -C source clean"
 
-    prefix.install "YaneuraOu_NNUE", "YaneuraOu_NNUE_KP256", "YaneuraOu_KPPT", "YaneuraOu_KPP_KKPT"
+    prefix.install "YaneuraOu_NNUE", "YaneuraOu_NNUE_KP256", "YaneuraOu_NNUE_HALFKPE9", "YaneuraOu_MATE"
   end
 
   test do
     assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_NNUE | grep 'usiok'")
     assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_NNUE_KP256 | grep 'usiok'")
-    assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_KPPT | grep 'usiok'")
-    assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_KPP_KKPT | grep 'usiok'")
+    assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_NNUE_HALFKPE9 | grep 'usiok'")
+    assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_MATE | grep 'usiok'")
   end
 end

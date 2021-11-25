@@ -16,7 +16,7 @@ class Fukauraou < Formula
     # ENV.deparallelize  # if your formula fails when building in parallel
 
     system "gsed -i -e \"s,-march=corei7-avx,-march=core-avx2,\" source/Makefile"
-	system "gsed -i -e \"s,\/\/#define ONNXRUNTIME,#define ONNXRUNTIME,\" source/config.h"
+    system "gsed -i -e \"s,\/\/#define ONNXRUNTIME,#define ONNXRUNTIME,\" source/config.h"
     system "gsed -i -e \"s,std::wstring,\/\/std::wstring,\" -e \"s,\/\/std::string onnx_filename(filename),std::string onnx_filename(model_filename),\" source/eval/deep/nn_onnx_runtime.cpp"
 
     cpu = "OTHER"

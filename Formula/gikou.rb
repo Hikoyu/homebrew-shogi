@@ -10,6 +10,7 @@ class Gikou < Formula
 
   depends_on "gnu-sed"
   depends_on "unar"
+  depends_on "libomp"
 
   resource "Gikou2_win" do
     url "https://github.com/gikou-official/Gikou/releases/download/v2.0.2/gikou2_win.zip"

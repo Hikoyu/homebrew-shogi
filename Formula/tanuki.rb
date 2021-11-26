@@ -24,11 +24,12 @@ class Tanuki < Formula
     system "gsed -i -e \"s,-march=corei7-avx,-march=core-avx2,\" source/Makefile"
     system "gsed -i -e \"s,-lsqlite3\.dll,-lsqlite3 #,\" source/Makefile"
 
-    cpu = "OTHER"
-    cpu = "SSE2" if Hardware::CPU.intel?
-    cpu = "SSE41" if Hardware::CPU.sse4?
-    cpu = "SSE42" if Hardware::CPU.sse4_2?
-    cpu = "AVX2" if Hardware::CPU.avx2?
+    odie "[ERROR] Your CPU is not 64-bit!" unless Hardware::CPU.is_64_bit?
+    odie "[ERROR] Your CPU does not support SSSE3 instruction set!" unless Hardware::CPU.ssse3?
+    cpu = "SSSE3" and ohai "[INFO] Your CPU supports SSSE3 instruction set." if Hardware::CPU.ssse3?
+    cpu = "SSE41" and ohai "[INFO] Your CPU supports SSE4.1 instruction set." if Hardware::CPU.sse4?
+    cpu = "SSE42" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.sse4_2?
+    cpu = "AVX2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.avx2?
 
     cppflags = "-Xpreprocessor -I#{HOMEBREW_PREFIX}/include"
     ldflags = "-L#{HOMEBREW_PREFIX}/lib -lomp"

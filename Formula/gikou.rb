@@ -20,9 +20,11 @@ class Gikou < Formula
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
 
-    cpu = "sse4.1" if Hardware::CPU.sse4?
-    cpu = "sse4.2" if Hardware::CPU.sse4_2?
-    cpu = "avx2" if Hardware::CPU.avx2?
+    odie "[ERROR] Your CPU is not 64-bit!" unless Hardware::CPU.is_64_bit?
+    odie "[ERROR] Your CPU does not support SSE4.1 instruction set!" unless Hardware::CPU.sse4?
+    cpu = "sse4.1" and ohai "[INFO] Your CPU supports SSE4.1 instruction set." if Hardware::CPU.sse4?
+    cpu = "sse4.2" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.sse4_2?
+    cpu = "avx2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.avx2?
 
     system "gsed -i -e \"s,-msse4.2,-m#{cpu},\" Makefile"
     system "gsed -i -e \"s,-fopenmp,-Xpreprocessor -fopenmp,\" Makefile"

@@ -19,11 +19,12 @@ class Fukauraou < Formula
     system "gsed -i -e \"s,\/\/#define ONNXRUNTIME,#define ONNXRUNTIME,\" source/config.h"
     system "gsed -i -e \"s,std::wstring,\/\/std::wstring,\" -e \"s,\/\/std::string onnx_filename(filename),std::string onnx_filename(model_filename),\" source/eval/deep/nn_onnx_runtime.cpp"
 
-    cpu = "OTHER"
-    cpu = "SSE2" if Hardware::CPU.intel?
-    cpu = "SSE41" if Hardware::CPU.sse4?
-    cpu = "SSE42" if Hardware::CPU.sse4_2?
-    cpu = "AVX2" if Hardware::CPU.avx2?
+    odie "[ERROR] Your CPU is not 64-bit!" unless Hardware::CPU.is_64_bit?
+    odie "[ERROR] Your CPU does not support SSSE3 instruction set!" unless Hardware::CPU.ssse3?
+    cpu = "SSSE3" and ohai "[INFO] Your CPU supports SSSE3 instruction set." if Hardware::CPU.ssse3?
+    cpu = "SSE41" and ohai "[INFO] Your CPU supports SSE4.1 instruction set." if Hardware::CPU.sse4?
+    cpu = "SSE42" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.sse4_2?
+    cpu = "AVX2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.avx2?
 
     cppflags = "-I#{HOMEBREW_PREFIX}/include/onnxruntime/core/session -I#{HOMEBREW_PREFIX}/include/onnxruntime/core/providers/cpu -fexceptions"
     ldflags = "-L#{HOMEBREW_PREFIX}/lib -lonnxruntime"

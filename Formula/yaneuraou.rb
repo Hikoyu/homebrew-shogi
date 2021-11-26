@@ -16,11 +16,12 @@ class Yaneuraou < Formula
 
     system "gsed -i -e \"s,-march=corei7-avx,-march=core-avx2,\" source/Makefile"
 
-    cpu = "OTHER"
-    cpu = "SSE2" if Hardware::CPU.intel?
-    cpu = "SSE41" if Hardware::CPU.sse4?
-    cpu = "SSE42" if Hardware::CPU.sse4_2?
-    cpu = "AVX2" if Hardware::CPU.avx2?
+    odie "[ERROR] Your CPU is not 64-bit!" unless Hardware::CPU.is_64_bit?
+    odie "[ERROR] Your CPU does not support SSSE3 instruction set!" unless Hardware::CPU.ssse3?
+    cpu = "SSSE3" and ohai "[INFO] Your CPU supports SSSE3 instruction set." if Hardware::CPU.ssse3?
+    cpu = "SSE41" and ohai "[INFO] Your CPU supports SSE4.1 instruction set." if Hardware::CPU.sse4?
+    cpu = "SSE42" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.sse4_2?
+    cpu = "AVX2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.avx2?
 
     system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE"
     system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE"

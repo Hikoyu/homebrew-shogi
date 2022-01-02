@@ -4,9 +4,9 @@
 class Yaneuraou < Formula
   desc "YaneuraOu is the World's Strongest Shogi engine(AI player) , WCSC29 1st winner , educational and USI compliant engine."
   homepage "http://yaneuraou.yaneu.com"
-  url "https://github.com/yaneurao/YaneuraOu/archive/refs/tags/v6.50.tar.gz"
-  version "6.50"
-  sha256 "cdf3d6f6b1222e3f273a03cd8d2aae6392e49a024e1742dbdbc3b93912c30a41"
+  url "https://github.com/yaneurao/YaneuraOu/archive/refs/tags/v7.00.tar.gz"
+  version "7.00"
+  sha256 "3547a074f0ca74610e3fcab40f51c2da85ff7056f0471bc6d371956daf03bfde"
   license "GPL-3.0"
 
   depends_on "gnu-sed"
@@ -35,17 +35,22 @@ class Yaneuraou < Formula
     system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE_HALFKPE9"
     system "make -C source clean"
 
+    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE_HALFKP_VM_256X2_32_32"
+    system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE_HALFKP_VM_256X2_32_32"
+    system "make -C source clean"
+
     system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_MATE_ENGINE"
     system "mv source/YaneuraOu-by-gcc YaneuraOu_MATE"
     system "make -C source clean"
 
-    prefix.install "YaneuraOu_NNUE", "YaneuraOu_NNUE_KP256", "YaneuraOu_NNUE_HALFKPE9", "YaneuraOu_MATE"
+    prefix.install "YaneuraOu_NNUE", "YaneuraOu_NNUE_KP256", "YaneuraOu_NNUE_HALFKPE9", "YaneuraOu_NNUE_HALFKP_VM_256X2_32_32", "YaneuraOu_MATE"
   end
 
   test do
     assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_NNUE | grep 'usiok'")
     assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_NNUE_KP256 | grep 'usiok'")
     assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_NNUE_HALFKPE9 | grep 'usiok'")
+    assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_NNUE_HALFKP_VM_256X2_32_32 | grep 'usiok'")
     assert_match 'usiok', shell_output("cd #{prefix} && echo 'usi' | ./YaneuraOu_MATE | grep 'usiok'")
   end
 end

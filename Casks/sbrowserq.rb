@@ -5,8 +5,8 @@ cask "sbrowserq" do
   sha256 "8952a2095efc2f658c0dc03cee7a5c77a1ab07bdd4186a089826665b13a4227e"
 
   url "https://www.sbrowser-q.com/SBrowserQ_V#{version_without_patch}_mac.dmg"
-  name "将棋ぶらうざQ"
-  desc "Shogi game playing and game record management"
+  name "SBrowserQ"
+  desc "Software for shogi playing a game and management a game record"
   homepage "https://www.sbrowser-q.com/"
 
   livecheck do

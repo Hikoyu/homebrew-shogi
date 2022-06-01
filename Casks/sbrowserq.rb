@@ -5,7 +5,7 @@ cask "sbrowserq" do
   sha256 "8952a2095efc2f658c0dc03cee7a5c77a1ab07bdd4186a089826665b13a4227e"
 
   url "https://www.sbrowser-q.com/SBrowserQ_V#{version_without_patch}_mac.dmg"
-  name "sbrowserq"
+  name "将棋ぶらうざQ"
   desc "Shogi game playing and game record management"
   homepage "https://www.sbrowser-q.com/"
 
@@ -15,5 +15,5 @@ cask "sbrowserq" do
     regex(/V(\d\.\d\.\d)/)
   end
 
-  app "SBrowserQ.app"
+  suite ".", target: name.first
 end

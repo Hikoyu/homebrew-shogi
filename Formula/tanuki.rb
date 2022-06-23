@@ -4,9 +4,9 @@
 class Tanuki < Formula
   desc "shogi engine(AI player), stronger than Bonanza6 , educational and tiny code(about 2500 lines) , USI compliant engine , capable of being compiled by VC++2015"
   homepage "https://github.com/nodchip/tanuki-"
-  url "https://github.com/nodchip/tanuki-/archive/refs/tags/tanuki-denryu2.tar.gz"
-  version "denryu2"
-  sha256 "86e2742ce8292e836b587f7e1a48442b7c00d89dd234f43f142502111d604ded"
+  url "https://github.com/nodchip/tanuki-/archive/refs/tags/tanuki-wcsc32.tar.gz"
+  version "wcsc32-2022-05-06"
+  sha256 "4df718b3b680c2b8c1db4674c9854676b19ddc8c62ae7d82ec3712fab1a6f00a"
   license "GPL-3.0"
 
   depends_on "gnu-sed"
@@ -14,8 +14,8 @@ class Tanuki < Formula
   depends_on "libomp"
 
   resource "tanuki-eval-book" do
-    url "https://github.com/nodchip/tanuki-/releases/download/tanuki-denryu2/tanuki-denryu2.7z"
-    sha256 "945b94ed42446213ea6786a904e7c50a29c7d009d4cd238f1662c6b2c2c46e52"
+    url "https://github.com/nodchip/tanuki-/releases/download/tanuki-wcsc32/tanuki-wcsc32-2022-05-06.7z"
+    sha256 "6b5d7d3ba0fcf03c07f5511cc259c1f6cb3e241b0dd6b19b1eb9ceed7d6abdfc"
   end
 
   def install
@@ -34,20 +34,20 @@ class Tanuki < Formula
     cppflags = "-Xpreprocessor -I#{HOMEBREW_PREFIX}/include"
     ldflags = "-L#{HOMEBREW_PREFIX}/lib -lomp"
 
-    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} EXTRA_CPPFLAGS=\"#{cppflags}\" EXTRA_LDFLAGS=\"#{ldflags}\" YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE_HALFKP_VM_256X2_32_32"
+    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} EXTRA_CPPFLAGS=\"#{cppflags}\" EXTRA_LDFLAGS=\"#{ldflags}\" YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE_HALFKP_1024X2_8_32"
     system "mv source/YaneuraOu-by-gcc tanuki"
     system "make -C source clean"
 
     resource("tanuki-eval-book").fetch
-    system "cp", resource("tanuki-eval-book").downloader.cached_location, "tanuki-denryu2.7z"
-    system "unar tanuki-denryu2.7z eval/* book/*"
+    system "cp", resource("tanuki-eval-book").downloader.cached_location, "tanuki-eval-book.7z"
+    system "unar tanuki-eval-book.7z eval/* book/*"
 
     author = "Ziosoft, Inc. Computer Shogi Club"
     exe = "#{opt_prefix}/YaneuraOu_NNUE_HALFKP_VM_256X2_32_32"
 
     system "echo #{name}_#{version} >engine_name.txt"
     system "echo #{author} >>engine_name.txt"
-    prefix.install Dir["tanuki-denryu2/*"], "engine_name.txt", "#{name}"
+    prefix.install Dir["tanuki-eval-book/*"], "engine_name.txt", "#{name}"
     ohai "[INFO] #{name} is installed in the path below."
     ohai "#{opt_prefix}/#{name}"
   end

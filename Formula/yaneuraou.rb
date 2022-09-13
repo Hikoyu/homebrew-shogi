@@ -4,9 +4,9 @@
 class Yaneuraou < Formula
   desc "YaneuraOu is the World's Strongest Shogi engine(AI player) , WCSC29 1st winner , educational and USI compliant engine."
   homepage "http://yaneuraou.yaneu.com"
-  url "https://github.com/yaneurao/YaneuraOu/archive/refs/tags/v7.00.tar.gz"
-  version "7.00"
-  sha256 "3547a074f0ca74610e3fcab40f51c2da85ff7056f0471bc6d371956daf03bfde"
+  url "https://github.com/yaneurao/YaneuraOu/archive/refs/tags/v7.50-wcsc32.tar.gz"
+  version "7.50"
+  sha256 "8d1f65cee1c628c0da70754cf5ae52b3c5c7f1ea21ea27ccdbb86db1a62f171a"
   license "GPL-3.0"
 
   depends_on "gnu-sed"
@@ -23,27 +23,21 @@ class Yaneuraou < Formula
     cpu = "SSE42" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.sse4_2?
     cpu = "AVX2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.avx2?
 
-    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE"
-    system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE"
-    system "make -C source clean"
+    editions = {
+      "YANEURAOU_ENGINE_NNUE" => "YaneuraOu_NNUE",
+      "YANEURAOU_ENGINE_NNUE_KP256" => "YaneuraOu_NNUE_KP256",
+      "YANEURAOU_ENGINE_NNUE_HALFKPE9" => "YaneuraOu_NNUE_HALFKPE9",
+      "YANEURAOU_ENGINE_NNUE_HALFKP_VM_256X2_32_32" => "YaneuraOu_NNUE_HALFKP_VM_256X2_32_32",
+      "YANEURAOU_MATE_ENGINE" => "YaneuraOu_MATE"
+    }
+	
+    editions.each do |ed, exe|
+      system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=#{ed}"
+      system "mv source/YaneuraOu-by-gcc #{exe}"
+      system "make -C source clean"
+    end
 
-    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE_KP256"
-    system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE_KP256"
-    system "make -C source clean"
-
-    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE_HALFKPE9"
-    system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE_HALFKPE9"
-    system "make -C source clean"
-
-    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE_HALFKP_VM_256X2_32_32"
-    system "mv source/YaneuraOu-by-gcc YaneuraOu_NNUE_HALFKP_VM_256X2_32_32"
-    system "make -C source clean"
-
-    system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} YANEURAOU_EDITION=YANEURAOU_MATE_ENGINE"
-    system "mv source/YaneuraOu-by-gcc YaneuraOu_MATE"
-    system "make -C source clean"
-
-    prefix.install "YaneuraOu_NNUE", "YaneuraOu_NNUE_KP256", "YaneuraOu_NNUE_HALFKPE9", "YaneuraOu_NNUE_HALFKP_VM_256X2_32_32", "YaneuraOu_MATE"
+    prefix.install editions.values
   end
 
   test do

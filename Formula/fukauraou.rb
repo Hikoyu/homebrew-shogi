@@ -4,9 +4,9 @@
 class Fukauraou < Formula
   desc "YaneuraOu is the World's Strongest Shogi engine(AI player) , WCSC29 1st winner , educational and USI compliant engine."
   homepage "http://yaneuraou.yaneu.com"
-  url "https://github.com/yaneurao/YaneuraOu/archive/refs/tags/v6.50.tar.gz"
-  version "6.50"
-  sha256 "cdf3d6f6b1222e3f273a03cd8d2aae6392e49a024e1742dbdbc3b93912c30a41"
+  url "https://github.com/yaneurao/YaneuraOu/archive/refs/tags/V7.61.tar.gz"
+  version "7.61"
+  sha256 "b012daa2ed8f1c41daccbb0c994c41fbb57691c3ebb892824278fc7c9ae60ac6"
   license "GPL-3.0"
 
   depends_on "gnu-sed"
@@ -14,6 +14,9 @@ class Fukauraou < Formula
   
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
+
+    author = "yaneurao"
+    exe = "FukauraOu"
 
     system "gsed -i -e \"s,-march=corei7-avx,-march=core-avx2,\" source/Makefile"
     system "gsed -i -e \"s,\/\/#define ONNXRUNTIME,#define ONNXRUNTIME,\" source/config.h"
@@ -30,10 +33,13 @@ class Fukauraou < Formula
     ldflags = "-L#{HOMEBREW_PREFIX}/lib -lonnxruntime"
 	
     system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} EXTRA_CPPFLAGS=\"#{cppflags}\" EXTRA_LDFLAGS=\"#{ldflags}\" YANEURAOU_EDITION=YANEURAOU_ENGINE_DEEP"
-    system "mv source/YaneuraOu-by-gcc FukauraOu"
+    system "mv source/YaneuraOu-by-gcc #{exe}"
     system "make -C source clean"
 
-    prefix.install "FukauraOu"
+    system "echo #{name}_#{version} >engine_name.txt"
+    system "echo #{author} >>engine_name.txt"
+
+    prefix.install "engine_name.txt", "FukauraOu"
 	ohai "[INFO] The path below must be included in environmental variable DYLD_FALLBACK_LIBRARY_PATH."
 	ohai "#{HOMEBREW_PREFIX}/lib"
   end

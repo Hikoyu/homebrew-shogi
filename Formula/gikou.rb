@@ -20,24 +20,29 @@ class Gikou < Formula
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
 
+    author = "Yosuke Demura"
+    exe = "Gikou2"
+
     odie "[ERROR] Your CPU is not 64-bit!" unless Hardware::CPU.is_64_bit?
-    odie "[ERROR] Your CPU does not support SSE4.1 instruction set!" unless Hardware::CPU.sse4?
-    cpu = "sse4.1" and ohai "[INFO] Your CPU supports SSE4.1 instruction set." if Hardware::CPU.sse4?
-    cpu = "sse4.2" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.sse4_2?
-    cpu = "avx2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.avx2?
+    odie "[ERROR] Your CPU is not Intel processor." unless Hardware::CPU.intel?
+    odie "[ERROR] Your CPU does not support SSE4.1 instruction set!" if Hardware::CPU.intel? && !Hardware::CPU.sse4?
+    cpu = "sse4.1" and ohai "[INFO] Your CPU supports SSE4.1 instruction set." if Hardware::CPU.intel? && Hardware::CPU.sse4?
+    cpu = "sse4.2" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.intel? && Hardware::CPU.sse4_2?
+    cpu = "avx2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.intel? && Hardware::CPU.avx2?
 
     system "gsed -i -e \"s,-msse4.2,-m#{cpu},\" Makefile"
     system "gsed -i -e \"s,-fopenmp,-Xpreprocessor -fopenmp,\" Makefile"
     system "gsed -i -e \"s,-lpthread,-L/opt/intelbrew/lib -lomp -lpthread,\" Makefile"
     system "make INCLUDES=-I#{HOMEBREW_PREFIX}/include release"
-    system "mv bin/release #{name}"
+    system "mv bin/release #{exe}"
 
     resource("Gikou2_win").fetch
     system "cp", resource("Gikou2_win").downloader.cached_location, "gikou2_win.zip"
     system "unar gikou2_win.zip Copying.txt Readme.md.txt gikou_ja.txt *.bin"
-    prefix.install "#{name}", Dir["gikou2_win/*"]
+
+    prefix.install Dir["gikou2_win/*"], "#{exe}"
     ohai "[INFO] #{name} is installed in the path below."
-    ohai "#{opt_prefix}/#{name}"
+    ohai "#{opt_prefix}/#{exe}"
   end
 
   test do

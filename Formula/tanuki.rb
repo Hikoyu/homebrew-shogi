@@ -21,35 +21,38 @@ class Tanuki < Formula
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
 
+    author = "Ziosoft, Inc. Computer Shogi Club"
+    exe = "tanuki"
+
     system "gsed -i -e \"s,-march=corei7-avx,-march=core-avx2,\" source/Makefile"
     system "gsed -i -e \"s,-lsqlite3\.dll,-lsqlite3 #,\" source/Makefile"
 
     odie "[ERROR] Your CPU is not 64-bit!" unless Hardware::CPU.is_64_bit?
-    odie "[ERROR] Your CPU does not support SSSE3 instruction set!" unless Hardware::CPU.ssse3?
-    cpu = "SSSE3" and ohai "[INFO] Your CPU supports SSSE3 instruction set." if Hardware::CPU.ssse3?
-    cpu = "SSE41" and ohai "[INFO] Your CPU supports SSE4.1 instruction set." if Hardware::CPU.sse4?
-    cpu = "SSE42" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.sse4_2?
-    cpu = "AVX2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.avx2?
+    ohai "[INFO] Your CPU is Intel processor." if Hardware::CPU.intel?
+    odie "[ERROR] Your CPU does not support SSSE3 instruction set!" if Hardware::CPU.intel? && !Hardware::CPU.ssse3?
+    cpu = "SSSE3" and ohai "[INFO] Your CPU supports SSSE3 instruction set." if Hardware::CPU.intel? && Hardware::CPU.ssse3?
+    cpu = "SSE41" and ohai "[INFO] Your CPU supports SSE4.1 instruction set." if Hardware::CPU.intel? && Hardware::CPU.sse4?
+    cpu = "SSE42" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.intel? && Hardware::CPU.sse4_2?
+    cpu = "AVX2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.intel? && Hardware::CPU.avx2?
+    cpu = "OTHER" and ohai "[INFO] Your CPU is Apple M processor." if Hardware::CPU.arm?
 
     cppflags = "-Xpreprocessor -I#{HOMEBREW_PREFIX}/include"
     ldflags = "-L#{HOMEBREW_PREFIX}/lib -lomp"
 
     system "make -C source COMPILER=g++ TARGET_CPU=#{cpu} EXTRA_CPPFLAGS=\"#{cppflags}\" EXTRA_LDFLAGS=\"#{ldflags}\" YANEURAOU_EDITION=YANEURAOU_ENGINE_NNUE_HALFKP_1024X2_8_32"
-    system "mv source/YaneuraOu-by-gcc tanuki"
+    system "mv source/YaneuraOu-by-gcc #{exe}"
     system "make -C source clean"
 
     resource("tanuki-eval-book").fetch
     system "cp", resource("tanuki-eval-book").downloader.cached_location, "tanuki-eval-book.7z"
     system "unar tanuki-eval-book.7z eval/* book/*"
 
-    author = "Ziosoft, Inc. Computer Shogi Club"
-    exe = "#{opt_prefix}/YaneuraOu_NNUE_HALFKP_VM_256X2_32_32"
-
     system "echo #{name}_#{version} >engine_name.txt"
     system "echo #{author} >>engine_name.txt"
-    prefix.install Dir["tanuki-eval-book/*"], "engine_name.txt", "#{name}"
+
+    prefix.install Dir["tanuki-eval-book/*"], "engine_name.txt", "#{exe}"
     ohai "[INFO] #{name} is installed in the path below."
-    ohai "#{opt_prefix}/#{name}"
+    ohai "#{opt_prefix}/#{exe}"
   end
 
   test do

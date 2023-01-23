@@ -23,6 +23,7 @@ class Kristallweizen < Formula
     system "echo '#!/bin/sh' >#{name}"
     system "echo #{exe} >>#{name}"
     system "chmod 755 #{name}"
+
     prefix.install "eval", "engine_name.txt", "#{name}"
     ohai "[INFO] #{name} is installed in the path below."
     ohai "#{opt_prefix}/#{name}"

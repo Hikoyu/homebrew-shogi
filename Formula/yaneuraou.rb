@@ -17,11 +17,13 @@ class Yaneuraou < Formula
     system "gsed -i -e \"s,-march=corei7-avx,-march=core-avx2,\" source/Makefile"
 
     odie "[ERROR] Your CPU is not 64-bit!" unless Hardware::CPU.is_64_bit?
-    odie "[ERROR] Your CPU does not support SSSE3 instruction set!" unless Hardware::CPU.ssse3?
-    cpu = "SSSE3" and ohai "[INFO] Your CPU supports SSSE3 instruction set." if Hardware::CPU.ssse3?
-    cpu = "SSE41" and ohai "[INFO] Your CPU supports SSE4.1 instruction set." if Hardware::CPU.sse4?
-    cpu = "SSE42" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.sse4_2?
-    cpu = "AVX2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.avx2?
+    ohai "[INFO] Your CPU is Intel processor." if Hardware::CPU.intel?
+    odie "[ERROR] Your CPU does not support SSSE3 instruction set!" if Hardware::CPU.intel? && !Hardware::CPU.ssse3?
+    cpu = "SSSE3" and ohai "[INFO] Your CPU supports SSSE3 instruction set." if Hardware::CPU.intel? && Hardware::CPU.ssse3?
+    cpu = "SSE41" and ohai "[INFO] Your CPU supports SSE4.1 instruction set." if Hardware::CPU.intel? && Hardware::CPU.sse4?
+    cpu = "SSE42" and ohai "[INFO] Your CPU supports SSE4.2 instruction set." if Hardware::CPU.intel? && Hardware::CPU.sse4_2?
+    cpu = "AVX2" and ohai "[INFO] Your CPU supports AVX2 instruction set." if Hardware::CPU.intel? && Hardware::CPU.avx2?
+    cpu = "OTHER" and ohai "[INFO] Your CPU is Apple M processor." if Hardware::CPU.arm?
 
     editions = {
       "YANEURAOU_ENGINE_NNUE" => "YaneuraOu_NNUE",

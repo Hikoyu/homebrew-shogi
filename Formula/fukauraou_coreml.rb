@@ -11,9 +11,19 @@ class FukauraouCoreml < Formula
 
   depends_on "gnu-sed"
 
-  resource "fukauraou-coreml-model" do
+  resource "fukauraou-coreml-model_15x224" do
     url "https://github.com/select766/FukauraOu-CoreML/releases/download/coreml-sample-20220613/DlShogiResnet15x224SwishBatch.mlmodel"
     sha256 "803c49bbdd3adfd70383b60f14e5b46e8f31ebf939ce5896372162f3c6f4ec55"
+  end
+
+  resource "fukauraou-coreml-model_10" do
+    url "https://github.com/select766/FukauraOu-CoreML/releases/download/coreml-sample-20220613/DlShogiResnet10SwishBatch.mlmodel"
+    sha256 "eea5cfe5cbf1d2f8c7b90ddf2ccc771f8f66744d95b05bcaa29b5e09ce861ca2"
+  end
+
+  resource "fukauraou-coreml-model_5x64" do
+    url "https://github.com/select766/FukauraOu-CoreML/releases/download/coreml-sample-20220613/DlShogiResnet5x64SwishBatch.mlmodel"
+    sha256 "e978c23fb5ae2162d012fbdc159e3294eafa91d8ef9bc3bafb09e18dfac2b181"
   end
 
   def install
@@ -35,9 +45,14 @@ class FukauraouCoreml < Formula
     system "mv source/YaneuraOu-by-gcc #{exe}"
     system "make -C source clean"
 
-    resource("fukauraou-coreml-model").fetch
+    resource("fukauraou-coreml-model_15x224").fetch
+    resource("fukauraou-coreml-model_10").fetch
+    resource("fukauraou-coreml-model_5x64").fetch
     system "mkdir eval"
-    system "mv", resource("fukauraou-coreml-model").downloader.cached_location, "eval/model.mlmodel"
+    system "mv", resource("fukauraou-coreml-model_15x224").downloader.cached_location, "eval/DlShogiResnet15x224SwishBatch.mlmodel"
+    system "mv", resource("fukauraou-coreml-model_10").downloader.cached_location, "eval/DlShogiResnet10SwishBatch.mlmodel"
+    system "mv", resource("fukauraou-coreml-model_5x64").downloader.cached_location, "eval/DlShogiResnet5x64SwishBatch.mlmodel"
+    system "ln -s DlShogiResnet15x224SwishBatch.mlmodel eval/model.mlmodel"
 
     system "echo #{name}_#{version} >engine_name.txt"
     system "echo #{author} >>engine_name.txt"
